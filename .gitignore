@@ -2,7 +2,6 @@
 _construction/
 _specs/
 _scripts/
-assets/fonts/
 
 # CMS
 __pycache__/
