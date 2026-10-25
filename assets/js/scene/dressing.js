@@ -1,13 +1,14 @@
-// Dressing: utility poles, the overhead wire web, street lamps, the parked car, neon, signs and clutter. Seeded.
+// Dressing: utility poles, the overhead wire web, street lamps, the parked truck, neon, signs and clutter. Seeded.
 import {
   BoxGeometry, Color, CylinderGeometry, Group, MeshBasicMaterial, PlaneGeometry, PointLight, SphereGeometry, SpotLight,
   TorusGeometry, Vector3,
 } from '../vendor/three.module.js';
 import { STREET, POLES, CAR, PARKING, VENDING } from './layout.js';
-import { mesh, at, plate, range, pick, chance, wire, hose, merge, faceUV, atlasUV } from './parts.js';
+import { mesh, at, range, pick, chance, wire, hose, merge, faceUV, atlasUV } from './parts.js';
 import { kelvin, LAMP, glow } from './materials.js';
 import { instancer, M } from './buildings.js';
 import { flicker } from './motion.js';
+import { keiTruck } from './truck.js';
 
 export const dressing = (lib, rand, { tier, facades }) => {
   const group = new Group();
@@ -262,43 +263,12 @@ export const dressing = (lib, rand, { tier, facades }) => {
     animated.push({ kind: patterns[i % patterns.length], mat, light, base: light?.intensity ?? 0, phase: rand(), period: range(rand, 4, 9) });
   });
 
-  // ---------- parked kei van, tail lights toward camera ----------
-  const car = new Group();
+  // ---------- parked kei box truck, tail lights toward camera ----------
   {
-    const profile = [[0, 0.32], [3.35, 0.32], [3.35, 0.95], [3.12, 1.42], [2.62, 1.86], [0.1, 1.9], [0, 1.84]];
-    const body = mesh(plate(profile, 1.46, 0.05), lib.paint(0xe8e8e4, 0.28), { cast: true, receive: true });
-    at(body, 0, 0, 0, 0, Math.PI / 2, 0);
-    car.add(body);
-    const glass = lib.glass;
-    const rear = mesh(new PlaneGeometry(1.22, 0.62), glass);
-    at(rear, 0, 1.5, 0.003, 0, 0, 0);
-    car.add(rear);
-    for (const k of [-1, 1]) {
-      const side = mesh(new PlaneGeometry(2.3, 0.55), glass);
-      at(side, k * 0.735, 1.5, -1.45, 0, k * Math.PI / 2, 0);
-      car.add(side);
-      for (const zz of [-0.55, -2.75]) {
-        const wheel = mesh(new CylinderGeometry(0.29, 0.29, 0.18, 18), lib.rubber, { cast: true });
-        at(wheel, k * 0.66, 0.29, zz, 0, 0, Math.PI / 2);
-        car.add(wheel);
-      }
-      const tail = mesh(new BoxGeometry(0.13, 0.46, 0.04), glow(0xff1a10, 5));
-      tail.userData.dynamic = true;
-      at(tail, k * 0.62, 0.95, 0.072);
-      car.add(tail);
-    }
-    car.add(at(mesh(new BoxGeometry(1.5, 0.22, 0.08), lib.darkTrim, { cast: true }), 0, 0.42, 0.04));
-    const plateGeo = new BoxGeometry(0.33, 0.165, 0.01);
-    faceUV(plateGeo, 'z', 1, lib.signs.plate);
-    car.add(at(mesh(plateGeo, lib.signsDim), 0, 0.68, 0.06));
-    for (const k of [-1, 1]) {
-      const red = new PointLight(0xff2014, 1.8, 6, 2);
-      red.position.set(k * 0.62, 0.8, 0.5);
-      car.add(red);
-      lights.push(red);
-    }
-    at(car, CAR.side * (STREET.half - 0.95), 0, CAR.z + 1.7, 0, 0.03, 0);
-    group.add(car);
+    const truck = keiTruck(lib);
+    lights.push(...truck.lights);
+    at(truck.group, CAR.side * (STREET.half - 0.95), 0, CAR.z + 1.7, 0, 0.03, 0);
+    group.add(truck.group);
   }
 
   // ---------- clutter: pots, plants, bikes-less doorways ----------
