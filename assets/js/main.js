@@ -35,6 +35,23 @@ const toggleDisclosure = (button) => {
   });
 };
 
+// Legacy copy for insecure contexts (plain http / LAN IP), where navigator.clipboard is undefined.
+const copyViaSelection = (text) => {
+  const field = Object.assign(document.createElement('textarea'), { value: text, readOnly: true });
+  field.style.cssText = 'position:fixed;opacity:0;font-size:16px';
+  document.body.append(field);
+  field.setSelectionRange(0, text.length);
+  field.select();
+  const ok = document.execCommand('copy');
+  field.remove();
+  if (!ok) throw new Error('copy failed');
+};
+
+const copyText = async (text) => {
+  if (window.isSecureContext && navigator.clipboard) return navigator.clipboard.writeText(text);
+  copyViaSelection(text);
+};
+
 // Obfuscated email (data-u @ data-d): copies the address to the clipboard, falls back to mailto.
 const copyEmail = (button) => {
   const label = button.textContent;
@@ -42,7 +59,7 @@ const copyEmail = (button) => {
   button.addEventListener('click', async () => {
     const address = `${button.dataset.u}@${button.dataset.d}`;
     try {
-      await navigator.clipboard.writeText(address);
+      await copyText(address);
       button.textContent = 'Email copied';
     } catch {
       location.href = `mailto:${address}`;
