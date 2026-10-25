@@ -443,10 +443,13 @@ article > h3, article > h4 {
 
 [data-is="spec"] [role="listitem"] {
 	display: grid;
-	grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
-	gap: var(--space-s);
+	gap: var(--space-3xs) var(--space-s);
 	padding-block: var(--space-xs);
 	border-block-start: var(--hairline) solid var(--rule);
+}
+
+@media (min-width: 64rem) {
+	[data-is="spec"] [role="listitem"] { grid-template-columns: minmax(0, 1fr) minmax(0, 3fr); }
 }
 
 [data-is="spec"] [role="listitem"] > p:first-child {
