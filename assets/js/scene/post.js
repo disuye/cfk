@@ -1,5 +1,6 @@
 import { loadCube } from './lut.js';
 import { HalationPass } from './halation.js';
+import { GLITCH, GlitchPass } from './glitch.js';
 import {
   BokehPass, EffectComposer, GTAOPass, OutputPass, RenderPass, ShaderPass, UnrealBloomPass, Vector2, Vector3,
 } from '../vendor/three.module.js';
@@ -116,6 +117,8 @@ export const createPost = (renderer, scene, camera, { tier, tint }) => {
   }
 
   composer.addPass(new OutputPass());
+  const glitch = new GlitchPass(scene, camera);
+  composer.addPass(glitch);
   const grade = new ShaderPass(GradeShader);
   grade.uniforms.uTint.value.set(...tint);
   composer.addPass(grade);
@@ -130,7 +133,9 @@ export const createPost = (renderer, scene, camera, { tier, tint }) => {
   }
 
   return {
-    render: (time, focus) => {
+    render: (time, focus, dt, speed) => {
+      glitch.enabled = GLITCH.enabled;
+      if (glitch.enabled) glitch.update(time, dt, speed);
       grade.uniforms.uTime.value = time;
       if (bokeh) bokeh.uniforms.focus.value = focus;
       composer.render();

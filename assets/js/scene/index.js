@@ -134,15 +134,18 @@ const boot = () => {
   resize();
 
   const hooks = {};   // filled by debug.js only
+  let lastZ = null;
   const draw = (time, dt) => {
     hooks.beforeFrame?.();
     const focus = rig(time, dt);
     hooks.afterRig?.();
+    const speed = lastZ === null ? 0 : Math.abs(camera.position.z - lastZ) / dt;   // dolly m/s → scroll glitch
+    lastZ = camera.position.z;
     set.update(time);
     dust.update(time);
     set.sky.position.copy(camera.position);
     mirror.update(scene, camera);
-    post.render(time, focus);
+    post.render(time, focus, dt, speed);
     hooks.afterFrame?.();
   };
 

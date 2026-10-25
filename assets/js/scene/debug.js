@@ -9,7 +9,10 @@
 //   &holes[=0.45]          green background, no sky, no fog, camera tilted down (radians, unless &cam pins it):
 //                          green in the lower frame is a missing surface (open sky above is expected)
 //   &hud                   on-screen stats; &bench runs a timed benchmark after warm-up
+//   &glitch[=0.8|off]      VHS glitch strength, or off. With &still it is off unless given, so QA renders stay clean;
+//                          __scene3d.glitch(len, peak) fires a burst, __scene3d.GLITCH tunes it live
 import { Color } from '../vendor/three.module.js';
+import { GLITCH, triggerGlitch } from './glitch.js';
 
 const vec = (s) => (s ? s.split(',').map(Number) : null);
 
@@ -65,6 +68,12 @@ export const attach = ({ canvas, renderer, scene, camera, draw, hooks, setLoop, 
     return api.stats;
   };
   if (params.has('still')) setLoop(false);
+
+  if (params.get('glitch') === 'off') GLITCH.enabled = false;
+  else if (params.has('glitch')) Object.assign(GLITCH, { enabled: true, strength: Number(params.get('glitch') || 1) });
+  else if (params.has('still')) Object.assign(GLITCH, { strength: 0, idle: 0 });
+  api.GLITCH = GLITCH;
+  api.glitch = (len, peak) => triggerGlitch(len, peak);
 
   // Benchmark: n back-to-back frames, each forced to finish on the GPU. Real ms/frame for the §18 budget.
   // A 1-px readPixels is the sync: gl.finish() returns early on Chrome/ANGLE-Metal and under-reports ~2×.
