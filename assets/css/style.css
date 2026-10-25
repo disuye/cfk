@@ -310,8 +310,8 @@ main > :nth-child(even of :is(article, figure):not([data-is="spec"])) { grid-col
 main > :is([data-is="divider"], [data-is="banner"], [data-is="spec"]) { grid-column: 1 / -1; }
 
 @media (min-width: 40rem) {
-	main > :nth-child(odd of :is(article, figure):not([data-is="spec"]))  { grid-column: 1 / span 8; }
-	main > :nth-child(even of :is(article, figure):not([data-is="spec"])) { grid-column: 5 / -1; }
+	main > :nth-child(odd of :is(article, figure))  { grid-column: 1 / span 8; }
+	main > :nth-child(even of :is(article, figure)) { grid-column: 5 / -1; }
 }
 
 @media (min-width: 64rem) {
@@ -319,6 +319,7 @@ main > :is([data-is="divider"], [data-is="banner"], [data-is="spec"]) { grid-col
 	main > :nth-child(4n+2 of :is(article, figure):not([data-is="spec"])) { grid-column: 8 / span 5; margin-block-start: var(--stagger); }
 	main > :nth-child(4n+3 of :is(article, figure):not([data-is="spec"])) { grid-column: 2 / span 6; }
 	main > :nth-child(4n+4 of :is(article, figure):not([data-is="spec"])) { grid-column: 9 / span 4; margin-block-start: var(--stagger); }
+	main > [data-is="spec"] { grid-column: 3 / -3; }
 }
 
 /* ---------- blocks ---------- */
@@ -367,7 +368,7 @@ figure img {
 	transition: scale var(--t-slow) var(--ease), box-shadow var(--t-slow) var(--ease);
 }
 
-article img {
+article > p > img {
 	filter: grayscale(100%);
 }
 
@@ -386,7 +387,7 @@ main > article {
 	border-radius: var(--radius);
 }
 
-main > article > p { max-inline-size: var(--measure); }
+main > [data-is="card"] { max-inline-size: calc(var(--measure) + 2 * var(--space-m)); }
 
 article > h3, article > h4 {
 	font-family: var(--font-display);
