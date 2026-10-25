@@ -2,6 +2,10 @@
 	--z-scene: -2;
 	--t-scene: 1200ms;
 	--scene-blur: 0.375rem;
+
+	/* film grain (grain.js): strength; tile size is set by JS to 256 device px. Jump rate: EVERY in grain.js */
+	--grain-opacity: 0.55;
+	--grain-tile: 8rem;
 }
 
 [data-is="scene"] {
@@ -20,14 +24,29 @@
 
 main > :is(article, figure):not([data-is="photo"]) { backdrop-filter: blur(var(--scene-blur)); }
 
-[data-is="crt"] {
+/* Film grain: soft-light around mid-grey = strongest in midtones, none at black / white. */
+[data-is="grain"] {
 	position: fixed;
 	inset: 0;
-	z-index: var(--z-crt);
+	z-index: var(--z-grain);
 	inline-size: 100%;
 	block-size: var(--vh-lock, 100lvh);
-	max-inline-size: none;
+	overflow: hidden;
 	pointer-events: none;
-	mix-blend-mode: multiply;
-	opacity: var(--crt-opacity);
+	mix-blend-mode: soft-light;
+	opacity: 0;
+	transition: opacity var(--t-scene) var(--ease);
+}
+
+[data-is="grain"][data-ready] { opacity: var(--grain-opacity); }
+
+/* One tile of slack each side; grain.js jumps --grain-x/y (tile multiples). Own layer: a jump is composite-only. */
+[data-is="grain"]::before {
+	content: "";
+	position: absolute;
+	inset: calc(var(--grain-tile) * -1);
+	background: var(--grain-image, none) 0 0 / var(--grain-tile) var(--grain-tile);
+	image-rendering: pixelated;
+	translate: calc(var(--grain-tile) * var(--grain-x, 0)) calc(var(--grain-tile) * var(--grain-y, 0));
+	will-change: translate;
 }

@@ -33,18 +33,19 @@
 		<link rel="stylesheet" href="assets/css/scene.css">
 
 		<script src="assets/js/main.js" defer></script>
-		<script src="assets/js/crt.js" defer></script>
+		<script src="assets/js/grain.js" defer></script>
 		<script type="module" src="assets/js/scene/index.js"></script>
 	</head>
 	<body id="top">
 		<canvas data-is="scene" aria-hidden="true"></canvas>
-		<canvas data-is="crt" aria-hidden="true"></canvas>
+		<div data-is="grain" aria-hidden="true"></div>
 
 		<header data-is="masthead">
 			<nav aria-label="Primary">
 				<a href="#top" data-is="text-logo" aria-label="CFK Productions — top of page"></a>
 				<button type="button" popovertarget="menu" data-is="menu-button">Menu</button>
 				<div popover id="menu" data-is="nav-menu">
+					<a href="#top">Home</a>
 					<a href="#featured">Featured</a>
 					<a href="#about">About</a>
 					<a href="#services">Services</a>
@@ -148,18 +149,19 @@
 		</main>
 
 		<footer data-is="footer">
-			<div data-is="large-logo" aria-hidden="true"></div>
 			<div>
 				<h4>Links</h4>
 				<div data-is="footer-links">
+					<a href="#top">Home</a>
 					<a href="#featured">Featured</a>
 					<a href="#about">About</a>
 					<a href="#services">Services</a>
 					<a href="#contact">Contact</a>
 				</div>
 			</div>
+			<div data-is="large-logo" aria-hidden="true"></div>
 			<div data-is="copyright">
-				<p>©2026 CFK Productions</p>
+				<p>©2026 CFK | The Makimi Group Limited</p>
 			</div>
 		</footer>
 	</body>

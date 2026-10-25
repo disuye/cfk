@@ -147,6 +147,7 @@ const boot = () => {
     mirror.update(scene, camera);
     post.render(time, focus, dt, speed);
     hooks.afterFrame?.();
+    dispatchEvent(new Event('scene:frame'));   // grain.js keys its position jumps to this
   };
 
   // Watchdog: if the first 60 measured frames run slow, drop to the low post chain once.
