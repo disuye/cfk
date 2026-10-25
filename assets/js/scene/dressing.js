@@ -4,18 +4,10 @@ import {
   TorusGeometry, Vector3,
 } from '../vendor/three.module.js';
 import { STREET, POLES, CAR, PARKING, VENDING } from './layout.js';
-import { mesh, at, plate, range, pick, chance, wire, hose, merge, faceUV } from './parts.js';
+import { mesh, at, plate, range, pick, chance, wire, hose, merge, faceUV, atlasUV } from './parts.js';
 import { kelvin, LAMP, glow } from './materials.js';
 import { instancer, M } from './buildings.js';
 import { flicker } from './motion.js';
-
-// Remap a geometry's 0–1 UVs into an atlas rect.
-const atlasUV = (geometry, [u0, v0, u1, v1]) => {
-  const uv = geometry.attributes.uv;
-  for (let i = 0; i < uv.count; i += 1) uv.setXY(i, u0 + uv.getX(i) * (u1 - u0), v0 + uv.getY(i) * (v1 - v0));
-  uv.needsUpdate = true;
-  return geometry;
-};
 
 export const dressing = (lib, rand, { tier, facades }) => {
   const group = new Group();
@@ -41,7 +33,7 @@ export const dressing = (lib, rand, { tier, facades }) => {
     at(shaft, x, 0, p.z);
     group.add(shaft);
 
-    const sleeve = atlasUV(new CylinderGeometry(0.205, 0.205, 1.8, 14, 1, true), lib.signs.sleeve);
+    const sleeve = atlasUV(new CylinderGeometry(0.205, 0.205, 1.8, 14, 1, true, Math.PI), lib.signs.sleeve);   // UV seam faces away (-z)
     group.add(at(mesh(sleeve, lib.signsDim), x, 0.9, p.z));
 
     // crossarms: HV on top, LV below; arms run across the street axis (x)

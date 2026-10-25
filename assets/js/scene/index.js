@@ -29,7 +29,8 @@ const EXPOSURE = 0.9;
 const ENV = { probe: new Vector3(0, 2.2, -6), intensity: 0.45 };
 const FOV = { landscape: 54, portrait: 70 };
 const CLIP = { near: 0.2, far: 340 };   // far covers the off-axis towers from every dolly position
-const PARALLAX = { x: 0.45, y: 0.3, look: 0.8 };
+const PARALLAX = { x: 1.35, y: 0.3, lookX: 2.4, lookY: 0.8 };
+const IDLE = { after: 2.5, radius: 0.35, speed: 0.12, fadeIn: 0.4, fadeOut: 2 };   // pointer-idle orbit, normalized pointer units
 const EYE_HEIGHT = 1.25;
 const DOLLY = { from: 11.5, travel: 17, lookY: 6.2, ahead: 22 };
 
@@ -52,20 +53,27 @@ const createRig = (camera) => {
   const goal = { p: scrollProgress(), x: 0, y: 0 };
   const now = { ...goal };
   const look = new Vector3();
+  let lastMove = -Infinity;
+  let idle = 0;
   addEventListener('scroll', () => { goal.p = scrollProgress(); }, { passive: true });
   addEventListener('pointermove', (e) => {
     goal.x = e.clientX / innerWidth * 2 - 1;
     goal.y = e.clientY / innerHeight * 2 - 1;
+    lastMove = e.timeStamp / 1000;
   }, { passive: true });
 
   return (time, dt) => {
     now.p = damp(now.p, goal.p, 3, dt);
     now.x = damp(now.x, goal.x, 2, dt);
     now.y = damp(now.y, goal.y, 2, dt);
+    const resting = time - lastMove > IDLE.after;
+    idle = damp(idle, resting ? 1 : 0, resting ? IDLE.fadeIn : IDLE.fadeOut, dt);
+    const x = now.x + Math.cos(time * IDLE.speed) * IDLE.radius * idle;
+    const y = now.y + Math.sin(time * IDLE.speed) * IDLE.radius * 0.6 * idle;
     const drift = Math.sin(time * 0.05) * 0.2;
     const z = DOLLY.from - now.p * DOLLY.travel;
-    camera.position.set(0.35 + drift + now.x * PARALLAX.x, EYE_HEIGHT - now.y * PARALLAX.y, z);
-    look.set(now.x * PARALLAX.look + now.p * 0.6, DOLLY.lookY - now.y * PARALLAX.look, z - DOLLY.ahead);
+    camera.position.set(0.35 + drift + x * PARALLAX.x, EYE_HEIGHT - y * PARALLAX.y, z);
+    look.set(x * PARALLAX.lookX + now.p * 0.6, DOLLY.lookY - y * PARALLAX.lookY, z - DOLLY.ahead);
     camera.lookAt(look);
     return Math.max(4, camera.position.z - SUBJECT.z);   // → depth-of-field focus distance
   };

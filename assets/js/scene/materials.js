@@ -149,6 +149,7 @@ export const createLibrary = (rand, { size = 1024 } = {}) => {
     ac: new MeshStandardMaterial({ map: tex(T.acFace(), { repeat: false }), roughness: 0.6, metalness: 0.2 }),
     signsDim: new MeshStandardMaterial({ map: signTex, emissiveMap: signTex, emissive: new Color(1, 1, 1), emissiveIntensity: 0.06, roughness: 0.4 }),
     signsLit: new MeshStandardMaterial({ map: signTex, emissiveMap: signTex, emissive: new Color(1, 1, 1), emissiveIntensity: 0.75, roughness: 0.3 }),
+    lantern: new MeshStandardMaterial({ map: signTex, emissiveMap: signTex, emissive: new Color(1, 0.8, 0.7), emissiveIntensity: 1.4, roughness: 0.85 }),
     interiors,
     shop,
     signTex,

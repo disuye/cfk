@@ -441,6 +441,18 @@ const verticalText = (x, text, cx, top, step, size, family, weight = 800) => {
   [...text].forEach((ch, i) => x.fillText(ch, cx, top + step * (i + 0.5)));
 };
 
+// Shop fascia signs: text, background, foreground. Atlas slot `fascia${index}`.
+export const FASCIAS = [
+  ['クリーニング', rgb(20, 90, 170), grey(255)],
+  ['たばこ', rgb(200, 30, 40), grey(255)],
+  ['酒 SAKE', rgb(240, 236, 220), rgb(20, 20, 20)],
+  ['COFFEE', rgb(30, 30, 30), rgb(245, 220, 170)],
+  ['理容 ヤマダ', rgb(240, 240, 240), rgb(30, 60, 150)],
+  ['らーめん', rgb(180, 20, 20), rgb(255, 230, 120)],
+  ['薬 ドラッグ', rgb(250, 210, 40), rgb(20, 40, 120)],
+  ['不動産', rgb(30, 120, 70), grey(255)],
+];
+
 // Atlas of painted signs. Returns { canvas, uv: { name: [u0, v0, u1, v1] } } with v up.
 export const signAtlas = (rand) => {
   const W = 2048; const H = 2048;
@@ -481,17 +493,7 @@ export const signAtlas = (rand) => {
   }
 
   // shop fascias
-  const fascias = [
-    ['クリーニング', rgb(20, 90, 170), grey(255)],
-    ['たばこ', rgb(200, 30, 40), grey(255)],
-    ['酒 SAKE', rgb(240, 236, 220), rgb(20, 20, 20)],
-    ['COFFEE', rgb(30, 30, 30), rgb(245, 220, 170)],
-    ['理容 ヤマダ', rgb(240, 240, 240), rgb(30, 60, 150)],
-    ['らーめん', rgb(180, 20, 20), rgb(255, 230, 120)],
-    ['薬 ドラッグ', rgb(250, 210, 40), rgb(20, 40, 120)],
-    ['不動産', rgb(30, 120, 70), grey(255)],
-  ];
-  fascias.forEach(([text, bg, fg], i) => slot(`fascia${i}`, (i % 4) * 512, 920 + Math.floor(i / 4) * 140, 500, 130, (w, h) => {
+  FASCIAS.forEach(([text, bg, fg], i) => slot(`fascia${i}`, (i % 4) * 512, 920 + Math.floor(i / 4) * 140, 500, 130, (w, h) => {
     x.fillStyle = bg; x.fillRect(0, 0, w, h);
     x.fillStyle = fg; fitText(x, text, w - 50, 92, JP, 800);
     x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(text, w / 2, h / 2 + 4);
@@ -525,12 +527,35 @@ export const signAtlas = (rand) => {
     x.strokeStyle = rgb(210, 20, 30); x.lineWidth = 26; x.beginPath(); x.moveTo(w * 0.25, h * 0.25); x.lineTo(w * 0.75, h * 0.75); x.stroke();
   });
 
-  // pole safety sleeve (yellow / black chevrons)
+  // pole safety sleeve (yellow / black chevrons); rise across the width is a whole number of periods so the wrap seam lines up
   slot('sleeve', 920, 1220, 256, 512, (w, h) => {
     x.fillStyle = rgb(240, 200, 20); x.fillRect(0, 0, w, h);
     x.fillStyle = grey(20);
-    for (let k = -h; k < h * 2; k += 80) { x.beginPath(); x.moveTo(0, k); x.lineTo(w, k + 120); x.lineTo(w, k + 160); x.lineTo(0, k + 40); x.fill(); }
+    for (let k = -h; k < h * 2; k += 80) { x.beginPath(); x.moveTo(0, k); x.lineTo(w, k + 160); x.lineTo(w, k + 200); x.lineTo(0, k + 40); x.fill(); }
     x.globalAlpha = 0.35; x.drawImage(noise(w, 16, rand, h, 32), 0, 0); x.globalAlpha = 1;
+  });
+
+  // red paper lantern: ribbed paper, ラーメン down the front (u = 0.5), black with a white keyline.
+  // 640 × 400 matches the body's circumference : height, so glyphs aren't stretched.
+  slot('lantern', 1120, 0, 640, 400, (w, h) => {
+    const g = x.createLinearGradient(0, 0, 0, h);
+    g.addColorStop(0, rgb(120, 14, 12)); g.addColorStop(0.12, rgb(205, 34, 26)); g.addColorStop(0.88, rgb(205, 34, 26)); g.addColorStop(1, rgb(120, 14, 12));
+    x.fillStyle = g; x.fillRect(0, 0, w, h);
+    for (let y = 4; y < h; y += 9) { x.fillStyle = grey(0, 0.2); x.fillRect(0, y, w, 2); x.fillStyle = grey(255, 0.06); x.fillRect(0, y + 2, w, 1); }
+    const step = (h - 40) / 4; const size = step * 0.92; const cx = w / 2;
+    x.font = `900 ${size}px ${JP}`; x.textAlign = 'center'; x.textBaseline = 'middle';
+    x.lineJoin = 'round'; x.lineCap = 'round';
+    const glyph = (ch, cy) => {
+      if (ch === 'ー') {   // vertical writing: the long-vowel mark runs down, not across
+        x.beginPath(); x.moveTo(cx, cy - step * 0.32); x.lineTo(cx, cy + step * 0.32);
+        x.strokeStyle = grey(250); x.lineWidth = size * 0.17 + 12; x.stroke();
+        x.strokeStyle = grey(12); x.lineWidth = size * 0.17; x.stroke();
+        return;
+      }
+      x.strokeStyle = grey(250); x.lineWidth = 12; x.strokeText(ch, cx, cy);
+      x.fillStyle = grey(12); x.fillText(ch, cx, cy);
+    };
+    [...'ラーメン'].forEach((ch, i) => glyph(ch, 20 + step * (i + 0.5)));
   });
 
   // licence plate (kei: yellow)

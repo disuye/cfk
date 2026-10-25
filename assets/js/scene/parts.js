@@ -61,6 +61,27 @@ export const worldUV = (geometry, metres = 1, offset = [0, 0]) => {
 };
 
 // Sets the UVs of one box face (by normal axis) to a sub-rectangle of an atlas.
+// Remap a geometry's 0–1 UVs into an atlas rect.
+export const atlasUV = (geometry, [u0, v0, u1, v1]) => {
+  const uv = geometry.attributes.uv;
+  for (let i = 0; i < uv.count; i += 1) uv.setXY(i, u0 + uv.getX(i) * (u1 - u0), v0 + uv.getY(i) * (v1 - v0));
+  uv.needsUpdate = true;
+  return geometry;
+};
+
+// Oblong paper lantern body: open cylinder pinched toward the ends. UV u = 0.5 faces +z; ends close to `neck` × radius.
+export const lanternBody = (radius, height, neck = 0.74) => {
+  const g = new CylinderGeometry(radius, radius, height, 20, 14, true, Math.PI);
+  const p = g.attributes.position;
+  for (let i = 0; i < p.count; i += 1) {
+    const t = p.getY(i) / (height / 2);
+    const k = Math.sqrt(1 - (1 - neck * neck) * t ** 6);
+    p.setXYZ(i, p.getX(i) * k, p.getY(i), p.getZ(i) * k);
+  }
+  g.computeVertexNormals();
+  return g;
+};
+
 export const faceUV = (geometry, axis, sign, [u0, v0, u1, v1]) => {
   const pos = geometry.attributes.position;
   const nor = geometry.attributes.normal;

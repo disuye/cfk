@@ -1,9 +1,10 @@
 import {
-  BoxGeometry, Color, CylinderGeometry, Group, InstancedMesh, Matrix4, PlaneGeometry, Quaternion, Vector3,
+  BoxGeometry, Color, CylinderGeometry, Group, InstancedMesh, Matrix4, MeshStandardMaterial, PlaneGeometry, PointLight, Quaternion, Vector3,
 } from '../vendor/three.module.js';
 import { STREET, PARKING, LOT_WEIGHTS, VENDING, reserved } from './layout.js';
-import { rng, range, pick, chance, mesh, at, plate, worldUV, faceUV, merge } from './parts.js';
+import { rng, range, pick, chance, mesh, at, plate, worldUV, faceUV, merge, atlasUV, lanternBody } from './parts.js';
 import { kelvin, WARM, COOL } from './materials.js';
+import { FASCIAS } from './textures.js';
 
 const UP = new Vector3(0, 1, 0);
 const VENDING_W = 1.0;   // machine width along the cluster (subject.js)
@@ -11,6 +12,13 @@ export const TEE = { width: 7, apron: 1.6, span: 34, seed: 1987 };   // T-juncti
 const v3 = new Vector3();
 const s3 = new Vector3();
 const q = new Quaternion();
+// Ramen shopfront: short tiled awning under the fascia, red paper lanterns along its eave.
+const RAMEN = {
+  sign: `fascia${FASCIAS.findIndex(([text]) => text === 'らーめん')}`,
+  depth: 0.7, pitch: 0.3, tilePitch: 0.2,
+  lantern: { r: 0.15, h: 0.52, cap: 0.05, cord: 0.08 },
+  light: { color: 0xff4a2a, intensity: 2.2, distance: 4.5 },
+};
 export const M = (x, y, z, ry = 0, sx = 1, sy = 1, sz = 1) => new Matrix4().compose(v3.set(x, y, z), q.setFromAxisAngle(UP, ry), s3.set(sx, sy, sz));
 
 // Collects instance transforms per (geometry, material) and emits one InstancedMesh per bin.
@@ -69,6 +77,75 @@ export const buildings = (lib, rand, { tier }) => {
   const glassLit = lib.interiors.map((t, i) => lib.window(true, i));
   const shopLit = lib.shop.map((map) => { const m = lib.window(true, 0); m.map = map; return m; });
   const glassDark = lib.glass;
+
+  // Ramen dressing in a local frame: x along the frontage, +z out to the street, y = 0 at the pavement.
+  // `turn` yaws the lanterns so their lettering reads toward the camera on side-street shops.
+  const ramenParts = (() => {
+    const { r, h, cap } = RAMEN.lantern;
+    // round tiles: half-cylinder ridges running down the slope (+z), crown up, and a disc end-tile at the eave
+    const ridge = new CylinderGeometry(0.06, 0.06, RAMEN.depth, 8, 1, false, Math.PI / 2, Math.PI).rotateX(Math.PI / 2);
+    const end = new CylinderGeometry(0.07, 0.07, 0.03, 12).rotateX(Math.PI / 2);
+    return {
+      body: atlasUV(lanternBody(r, h), lib.signs.lantern),
+      cap: new CylinderGeometry(r * 0.76, r * 0.76, cap, 16),
+      cord: new CylinderGeometry(0.005, 0.005, 1, 4),
+      ridge, end,
+      soffit: new MeshStandardMaterial({ color: 0x4a3426, roughness: 0.8 }),
+    };
+  })();
+  let ramenLights = tier === 'high' ? 2 : 1;
+  const ramenFront = (x, z, ry, width, yTop, turn) => {
+    const root = new Group();
+    const { depth, pitch } = RAMEN;
+    const eaveY = yTop - Math.sin(pitch) * depth; const eaveZ = Math.cos(pitch) * depth;
+
+    // tiled roof built in the slope's own frame: origin at the wall, +z down the slope
+    const roof = new Group();
+    const slab = new BoxGeometry(width, 0.05, depth);
+    worldUV(slab, 1.2);
+    const { roof: tile } = lib;
+    roof.add(at(mesh(slab, [tile, tile, tile, ramenParts.soffit, tile, tile], { cast: true }), 0, -0.025, depth / 2));
+    const rows = Math.floor(width / RAMEN.tilePitch);
+    const tiles = [];
+    for (let i = 0; i < rows; i += 1) {
+      const tx = (i - (rows - 1) / 2) * RAMEN.tilePitch;
+      tiles.push({ geometry: ramenParts.ridge, matrix: new Matrix4().makeTranslation(tx, 0, depth / 2) });
+      tiles.push({ geometry: ramenParts.end, matrix: new Matrix4().makeTranslation(tx, 0.01, depth + 0.012) });
+    }
+    roof.add(mesh(merge(tiles), tile, { cast: true }));
+    root.add(at(roof, 0, yTop, 0, pitch, 0, 0));
+    root.add(at(mesh(new BoxGeometry(width + 0.04, 0.06, 0.04), ramenParts.soffit), 0, eaveY - 0.05, eaveZ - 0.02));   // eave board
+    root.add(at(mesh(new BoxGeometry(width, 0.05, 0.06), lib.darkTrim), 0, yTop + 0.02, 0.03));             // wall flashing
+    const foot = [yTop - 0.4, 0.02]; const head = [eaveY - 0.05, eaveZ * 0.85];
+    const brace = Math.hypot(head[0] - foot[0], head[1] - foot[1]);
+    for (const sx of [-1, 1]) {
+      const b = mesh(new BoxGeometry(0.04, 0.04, brace), lib.darkTrim);
+      root.add(at(b, sx * (width / 2 - 0.2), (foot[0] + head[0]) / 2, (foot[1] + head[1]) / 2, -Math.atan2(head[0] - foot[0], head[1] - foot[1]), 0, 0));
+    }
+
+    const { h, cap, cord } = RAMEN.lantern;
+    const n = width > 4 ? 4 : 3;
+    const lz = eaveZ - 0.18;
+    const bodyY = eaveY - 0.07 - cord - cap - h / 2;
+    for (let k = 0; k < n; k += 1) {
+      const lantern = new Group();
+      lantern.add(mesh(ramenParts.body, lib.lantern));
+      lantern.add(at(mesh(ramenParts.cap, lib.rubber), 0, h / 2 + cap / 2, 0));
+      lantern.add(at(mesh(ramenParts.cap, lib.rubber), 0, -h / 2 - cap / 2, 0));
+      const c = mesh(ramenParts.cord, lib.wire);
+      c.scale.y = cord + 0.07;
+      lantern.add(at(c, 0, h / 2 + cap + (cord + 0.07) / 2, 0));
+      root.add(at(lantern, (k - (n - 1) / 2) * width / n, bodyY, lz, 0, turn + (k % 2 ? 0.06 : -0.05), 0));
+    }
+    if (ramenLights > 0) {
+      const { color, intensity, distance } = RAMEN.light;
+      const light = new PointLight(color, intensity, distance, 2);
+      light.position.set(0, bodyY, lz + 0.25);
+      root.add(light);
+      ramenLights -= 1;
+    }
+    group.add(at(root, x, 0, z, 0, ry, 0));
+  };
 
   const facadeMat = (kinds) => pick(rand, lib.facades.filter((f) => kinds.includes(f.set)));
 
@@ -249,7 +326,10 @@ export const buildings = (lib, rand, { tier }) => {
     const fm = mesh(fg, open || chance(rand, 0.5) ? lib.signsLit : lib.signsDim);
     at(fm, xf - s * 0.1, g0 - 0.15, zc);
     group.add(fm);
-    if (chance(rand, 0.4)) inst.add('awning', G.box, lib.darkTrim, M(xf - s * 0.55, g0 - 0.55, zc, 0, 1.1, 0.05, sw), null, { cast: true });
+    const ramen = open && name === RAMEN.sign;
+    const awning = chance(rand, 0.4);   // drawn either way so the seeded stream is unchanged
+    if (ramen) ramenFront(xf, zc, ry, sw, g0 - 0.48, s * Math.PI / 4);
+    else if (awning) inst.add('awning', G.box, lib.darkTrim, M(xf - s * 0.55, g0 - 0.55, zc, 0, 1.1, 0.05, sw), null, { cast: true });
     for (let fl = 1; fl < floors; fl += 1) {
       const y = g0 + (fl - 1) * fh;
       const n = Math.max(1, Math.round(w / 2.6));
@@ -408,9 +488,11 @@ export const buildings = (lib, rand, { tier }) => {
         inst.add(`shop${k}`, G.plane, shopLit[k], M(xc, 1.35, zf + 0.01, 0, sw, 2.5), interiorColour(r).multiplyScalar(0.85));
         inst.add('frame', G.frame, lib.frame, M(xc, 1.35, zf + 0.035, 0, sw, 2.6));
         const fg = new BoxGeometry(sw + 0.2, 0.62, 0.16);
-        faceUV(fg, 'z', 1, lib.signs[`fascia${Math.floor(r() * 8)}`]);
+        const name = `fascia${Math.floor(r() * 8)}`;
+        faceUV(fg, 'z', 1, lib.signs[name]);
         for (const [axis, sign] of [['x', 1], ['x', -1], ['y', 1], ['y', -1], ['z', -1]]) faceUV(fg, axis, sign, [0.999, 0, 1, 0.001]);
         group.add(at(mesh(fg, lib.signsLit), xc, 3.15, zf + 0.1));
+        if (name === RAMEN.sign) ramenFront(xc, zf, 0, sw, 2.82, 0);
       } else {
         inst.add('door', G.box, lib.frameDark, M(xc - W * 0.25, 1.0, zf + 0.03, 0, 0.85, 2.0, 0.06));
         winZ(xc + W * 0.2, zf, 1.4, 1.5, 1.05, r() < 0.4);
