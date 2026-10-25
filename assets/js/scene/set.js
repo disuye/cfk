@@ -54,9 +54,9 @@ const paintMarks = (x, { W, H, ppm }) => {
   x.globalCompositeOperation = 'source-over';
 };
 
-export const buildSet = ({ rand, tier, mirror, taps }) => {
+export const buildSet = ({ rand, tier, mirror, taps, surfaces }) => {
   const root = new Group();
-  const lib = createLibrary(rand, { size: tier === 'high' ? 1024 : 512 });
+  const lib = createLibrary(rand, { size: surfaces });
 
   // ---------- sky (follows the camera, so it is never clipped) ----------
   const skyMat = new MeshBasicMaterial({ map: tex(paintSky(rand), { repeat: false }), side: BackSide, fog: false, depthWrite: false });

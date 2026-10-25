@@ -20,9 +20,11 @@ const DEBUG = params.has('debug');   // test hooks: debug.js, see tooling-spec.m
 const FPS = 30;
 const STEP = 1 / FPS;
 const SEED = 1984;
+// surfaces: px size of the tiling surface textures (facades, asphalt, concrete; secondary sets get half).
+// Power of two. Sign / neon atlases are fixed size, so lettering stays sharp on every tier.
 const TIERS = {
-  high: { ratio: 1.5, dust: 1400, mirror: 0.5, taps: 12 },
-  low: { ratio: 1, dust: 600, mirror: 0.33, taps: 7 },
+  high: { ratio: 1.5, dust: 1400, mirror: 0.5, taps: 12, surfaces: 512 },
+  low: { ratio: 1, dust: 600, mirror: 0.33, taps: 7, surfaces: 512 },
 };
 const HAZE = { density: 0.0095, mix: 0.5, horizon: [0.62, 0.4, 0.58] };   // ground mixed toward the dusk horizon
 const EXPOSURE = 0.9;
@@ -102,7 +104,8 @@ const boot = () => {
   const camera = new PerspectiveCamera(FOV.landscape, 1, CLIP.near, CLIP.far);
   const rand = rng(SEED);
   const mirror = createMirror(renderer, { scale: tier.mirror });
-  const set = buildSet({ rand, tier: tierName, mirror, taps: tier.taps });
+  const surfaces = (DEBUG && Number(params.get('surfaces'))) || tier.surfaces;
+  const set = buildSet({ rand, tier: tierName, mirror, taps: tier.taps, surfaces });
   scene.add(set.root);
 
   const dust = createDust(rand, set.lib.radial, new Color(1, 0.86, 0.95), {

@@ -3,6 +3,7 @@
 //
 //   ?debug                 expose window.__scene3d, per-frame stats, bypass the low-spec skip
 //   &tier=high|low         force a quality tier
+//   &surfaces=1024         override the tier's tiling surface texture size (power of two), for A/B checks
 //   &still                 stop the real-time loop; step frames with __scene3d.step(n, dt)
 //   &t=12.5                start time for still frames (flicker / drift phase)
 //   &cam=x,y,z&look=x,y,z  pin the camera (overrides the scroll rig)

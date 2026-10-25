@@ -71,7 +71,7 @@ export const glow = (color, intensity = 1, opts = {}) => {
   return m;
 };
 
-// The full material library for the street. `size` halves on the low tier.
+// The full material library for the street. `size` = tiling surface texture px (TIERS.surfaces in index.js).
 export const createLibrary = (rand, { size = 1024 } = {}) => {
   const half = size / 2;
   const sets = {
