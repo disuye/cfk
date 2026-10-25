@@ -9,7 +9,7 @@
   if (!el) return;
 
   const TILE = 256;      // device px per tile edge; animation offsets are 1/8 multiples, so always whole pixels
-  const SIGMA = 30;      // grain contrast around mid-grey (0–127); overall strength is --grain-opacity
+  const SIGMA = 50;      // grain contrast around mid-grey (0–127); overall strength is --grain-opacity
   const CLUMP = 0.45;    // share of coarser, soft grain (film dye clouds) vs single-pixel noise
   const CHROMA = 0.18;   // per-channel colour grain, relative to the luminance grain
   const EVERY = 3;      // scene frames per grain jump: 10 = 3/s, 15 = 2/s, 20 = 1.5/s at the scene's 30 fps

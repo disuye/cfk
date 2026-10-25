@@ -95,7 +95,7 @@
 	/* layers (fixed) */
 	--z-bg: -1;
 	--z-nav: 50;
-	--z-grain: 0;
+	--z-grain: 5;
 }
 
 /* ---------- base ---------- */
