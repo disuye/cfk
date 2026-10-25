@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+		<title>CFK Productions</title>
+		<meta name="description" content="CFK Productions — film, sound and broadcast.">
+		<link rel="canonical" href="https://cfk.example/">
+
+		<meta name="color-scheme" content="dark">
+		<meta name="theme-color" content="#1C1234">
+
+		<meta property="og:type" content="website">
+		<meta property="og:url" content="https://cfk.example/">
+		<meta property="og:title" content="CFK Productions">
+		<meta property="og:description" content="CFK Productions — film, sound and broadcast.">
+		<meta property="og:image" content="https://cfk.example/assets/img/og.png">
+		<meta property="og:image:width" content="1200">
+		<meta property="og:image:height" content="630">
+		<meta property="og:image:alt" content="CFK Productions logo">
+		<meta name="twitter:card" content="summary_large_image">
+
+		<link rel="icon" href="assets/favicon/favicon.ico" sizes="any">
+		<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png">
+		<link rel="apple-touch-icon" href="assets/favicon/apple-touch-icon.png">
+		<link rel="manifest" href="assets/favicon/site.webmanifest">
+
+		<link rel="preload" href="assets/fonts/Rubik-Variable.woff2" as="font" type="font/woff2" crossorigin>
+		<link rel="preload" href="assets/fonts/SpaceGrotesk-Variable.woff2" as="font" type="font/woff2" crossorigin>
+		<link rel="stylesheet" href="assets/css/reset.css">
+		<link rel="stylesheet" href="assets/css/style.css">
+		<link rel="stylesheet" href="assets/css/scene.css">
+
+		<script src="assets/js/main.js" defer></script>
+		<script src="assets/js/crt.js" defer></script>
+		<script type="module" src="assets/js/scene/index.js"></script>
+	</head>
+	<body id="top">
+		<canvas data-is="scene" aria-hidden="true"></canvas>
+		<canvas data-is="crt" aria-hidden="true"></canvas>
+
+		<header data-is="masthead">
+			<nav aria-label="Primary">
+				<a href="#top" data-is="text-logo" aria-label="CFK Productions — top of page"></a>
+				<button type="button" popovertarget="menu" data-is="menu-button">Menu</button>
+				<div popover id="menu" data-is="nav-menu">
+					<a href="#featured">Featured</a>
+					<a href="#about">About</a>
+					<a href="#services">Services</a>
+					<a href="#contact">Contact</a>
+					<button type="button" popovertarget="menu" popovertargetaction="hide" data-is="menu-button">Close</button>
+				</div>
+			</nav>
+
+			<div data-is="splash">
+			<div data-is="text-logo" role="img" aria-label="CFK Productions"></div>
+			<div data-is="banner" role="note">
+				<p>Film production &amp; licensing</p>
+				<a href="#contact" data-is="cta">Contact CFK</a>
+			</div>
+
+				<a href="#main" data-is="scroll-cue" aria-label="Scroll to content"></a>
+			</div>
+		</header>
+
+		<main id="main">
+
+
+
+			<div data-is="divider" id="featured">
+				<h2>Featured</h2>
+			</div>
+
+			<figure>
+				<a href="#">
+					<img src="../assets/img/test.jpg">
+				</a>
+			</figure>
+
+			<figure>
+				<img src="../assets/img/test.jpg">
+			</figure>
+
+			<figure>
+				<img src="../assets/img/test.jpg">
+			</figure>
+
+			<figure>
+				<img src="../assets/img/test.jpg">
+			</figure>
+
+			<div data-is="divider" id="about">
+				<h2>About</h2>
+			</div>
+			
+			<article data-is="card">
+				<p data-is="meta">01 · Welcome</p>
+				<h3>CFK Productions</h3>
+				<p data-is="standfirst"><b>CFK</b> is a lean, fast-paced film production company and trusted source for all things related to Asian cinema.</p>
+	
+				<img src="../assets/img/test3.jpg">
+
+				<p>Established 2005 in Hong Kong <b>CFK</b>'s purpose has always been to document and showcase the fascinating sub-culture of Asian film-making – via the highest quality re-issues, restorations, documentaries, audio commentaries and expanded stories.</p>
+			</article>
+
+			<article data-is="card">
+				<p data-is="meta">02 · Our Network</p>
+				<h3>Asia Based</h3>
+				<p data-is="standfirst">Our production team covers the entire East Asian film industry, and is very much 'on-the-ground'.</p>
+				<img src="../assets/img/test2.jpg">
+				<p>Thanks to this presence, <b>CFK</b> has direct and often exclusive access the original film prints and media archives.</p>
+				<p>And most importantly of all the <b>CFK</b> team has personal access to the amazing people who created these films, the personalities who make Asian cinema so endearing.</p>
+			</article>
+
+			<article data-is="card">
+				<p data-is="meta">03 · Connection</p>
+				<h3>Right Here</h3>
+				<p>Whatever project you have in mind – regional licensing, documentaries, archive restoration or research (or you just want to connect with fellow film buffs) – CFK is right here.</p>
+				<p>When all is said and done, <b>CFK</b> wants share our passion &amp; enthusiasm for Asian film-making with fans worldwide.</p>
+				<a href="#contact" data-is="cta">Contact CFK</a>
+			</article>
+
+			<div data-is="divider" id="services">
+				<h2>Services</h2>
+			</div>
+
+			<article data-is="spec">
+				<h4>We do...</h4>
+				<p></p>
+				<div role="list">
+					<div role="listitem"><p>Licensing</p><p>Extensive catalog of Asian films ready for international distribution. Looking for something specific? We also source.</p></div>
+					<div role="listitem"><p>Filming</p><p>From script to deliverables. Full length documentaries, featurettes and promotional shorts.</p></div>
+					<div role="listitem"><p>Production</p><p>Audio commentaries, interviews, BTS, fully researched and created in-house. </p></div>
+					<div role="listitem"><p>Post-Production</p><p>Editing, compositing, motion graphics, audio and soundtrack. Preparation for physical media, cinema and streamed release.</p></div>
+					<div role="listitem"><p>Masters &amp; Archive</p><p>Original reels/dups, digital restoration of analog source material, archiving & cataloging additional media.</p></div>
+				</div>
+			</article>
+
+			<div data-is="divider" id="contact">
+				<h2>Contact</h2>
+			</div>
+
+			<div data-is="banner" role="note">
+				<p>Let's do this!</p>
+				<button type="button" data-is="cta" data-u="hello" data-d="cfk.example" data-copy aria-live="polite">Copy Email</button>
+			</div>
+		</main>
+
+		<footer data-is="footer">
+			<div data-is="large-logo" aria-hidden="true"></div>
+			<div>
+				<h4>Links</h4>
+				<div data-is="footer-links">
+					<a href="#featured">Featured</a>
+					<a href="#about">About</a>
+					<a href="#services">Services</a>
+					<a href="#contact">Contact</a>
+				</div>
+			</div>
+			<div data-is="copyright">
+				<p>©2026 CFK Productions</p>
+			</div>
+		</footer>
+	</body>
+</html>

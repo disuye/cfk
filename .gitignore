@@ -1,0 +1,14 @@
+.DS_Store
+_construction/
+_specs/
+_scripts/
+assets/fonts/
+
+# CMS
+__pycache__/
+cms/.venv/
+cms/.env
+cms/media/
+cms/static/
+_shots/
+node_modules/

@@ -1,0 +1,33 @@
+:root {
+	--z-scene: -2;
+	--t-scene: 1200ms;
+	--scene-blur: 0.375rem;
+}
+
+[data-is="scene"] {
+	position: fixed;
+	inset: 0;
+	z-index: var(--z-scene);
+	inline-size: 100%;
+	block-size: var(--vh-lock, 100lvh);
+	max-inline-size: none;
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity var(--t-scene) var(--ease);
+}
+
+[data-is="scene"][data-ready] { opacity: 1; }
+
+main > :is(article, figure):not([data-is="photo"]) { backdrop-filter: blur(var(--scene-blur)); }
+
+[data-is="crt"] {
+	position: fixed;
+	inset: 0;
+	z-index: var(--z-crt);
+	inline-size: 100%;
+	block-size: var(--vh-lock, 100lvh);
+	max-inline-size: none;
+	pointer-events: none;
+	mix-blend-mode: multiply;
+	opacity: var(--crt-opacity);
+}
