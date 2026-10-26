@@ -56,6 +56,7 @@
 	--gutter: clamp(1rem, 0.6rem + 1.6vw, 2rem);
 	--stagger: clamp(2rem, 1rem + 6vw, 8rem);
 	--measure: 38rem;
+	--figure-max: 35rem;
 
 	/* safe area */
 	--pad-top: env(safe-area-inset-top, 0px);
@@ -411,6 +412,7 @@ main > article {
 }
 
 main > [data-is="card"] { max-inline-size: calc(var(--measure) + 2 * var(--space-m)); }
+main > figure { max-inline-size: var(--figure-max); }
 
 article > h3, article > h4 {
 	font-family: var(--font-display);
