@@ -308,7 +308,7 @@ main > * { min-width: 0; }
 
 main > :nth-child(odd of :is(article, figure):not([data-is="spec"]))  { grid-column: 1 / span 11; }
 main > :nth-child(even of :is(article, figure):not([data-is="spec"])) { grid-column: 2 / -1; }
-main > :is([data-is="divider"], [data-is="banner"], [data-is="spec"]) { grid-column: 1 / -1; }
+main > :is([data-is="divider"], [data-is="banner"], [data-is="spec"], [data-is="gallery"]) { grid-column: 1 / -1; }
 
 @media (min-width: 40rem) {
 	main > :nth-child(odd of :is(article, figure))  { grid-column: 1 / span 8; }
@@ -407,7 +407,24 @@ main > article {
 }
 
 main > [data-is="card"] { max-inline-size: calc(var(--measure) + 2 * var(--space-m)); }
-main > figure { max-inline-size: var(--figure-max); }
+[data-is="gallery"] {
+	display: grid;
+	grid-template-columns: minmax(0, var(--figure-max));
+	gap: var(--gutter);
+	align-items: start;
+}
+
+@media (min-width: 40rem) {
+	[data-is="gallery"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 64rem) {
+	[data-is="gallery"] {
+		grid-template-columns: none;
+		grid-auto-flow: column;
+		grid-auto-columns: minmax(0, 1fr);
+	}
+}
 
 article > h3, article > h4 {
 	font-family: var(--font-display);
