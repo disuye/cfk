@@ -375,6 +375,10 @@ figcaption {
 	font-size: var(--text-m);
 }
 
+figcaption h3 {
+	color: var(--signal);
+}
+
 article > p > img {
 	filter: grayscale(100%);
 }
@@ -490,7 +494,8 @@ article > h3, article > h4 {
 	[data-is="spec"] [role="listitem"] { grid-template-columns: minmax(0, 1fr) minmax(0, 3fr); }
 }
 
-[data-is="spec"] [role="listitem"] > p:first-child {
+[data-is="spec"] [role="listitem"] > p:first-child,
+figcaption p:first-of-type {
 	font-size: var(--text-xs);
 	font-weight: 700;
 	letter-spacing: var(--track-wide);
