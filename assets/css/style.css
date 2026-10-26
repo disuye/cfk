@@ -80,6 +80,9 @@
 	--footer-logo: clamp(9rem, 22vw, 18rem);
 	--logo-glow: drop-shadow(0 0 0.15rem rgb(var(--ground-rgb) / 0.6)) drop-shadow(0 0 1.5rem rgb(var(--violet-rgb) / 0.7));
 
+	/* hover glow */
+	--hover-glow: 0 0 var(--space-s) var(--signal);
+
 	/* icons */
 	--icon-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 11h12.2l-5.6-5.6L12 4l8 8-8 8-1.4-1.4 5.6-5.6H4z'/%3E%3C/svg%3E");
 	--icon-down: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M11 4v12.2l-5.6-5.6L4 12l8 8 8-8-1.4-1.4-5.6 5.6V4z'/%3E%3C/svg%3E");
@@ -369,14 +372,10 @@ figure img {
 	transition: scale var(--t-slow) var(--ease), box-shadow var(--t-slow) var(--ease);
 }
 
-figcaption {
-	margin-block-start: var(--space-xs);
+[data-is="caption"] {
+	margin-block-start: var(--space-m);
 	padding: var(--space-m) var(--space-m);
 	font-size: var(--text-m);
-}
-
-figcaption h3 {
-	color: var(--signal);
 }
 
 article > p > img {
@@ -393,7 +392,7 @@ article > p > iframe {
 
 figure a:is(:hover, :focus-visible) img {
 	scale: 0.98;
-	box-shadow: 0px 0px 20px var(--signal); 
+	box-shadow: var(--hover-glow); 
 }
 
 main > article {
@@ -403,7 +402,7 @@ main > article {
 	padding: var(--space-m);
 }
 
-:is(main > article, figcaption) {
+:is(main > article, [data-is="caption"]) {
 	background: var(--panel);
 	border: var(--hairline) solid var(--rule);
 	border-block-start: var(--rule-heavy) solid var(--violet);
@@ -490,12 +489,21 @@ article > h3, article > h4 {
 	border-block-start: var(--hairline) solid var(--rule);
 }
 
+/* Same rhythm as a spec list item: hairline, --space-xs above the label, --space-3xs to its value. */
+[data-is="caption"] p:first-of-type {
+	margin-block-start: var(--space-xs);
+	padding-block-start: var(--space-xs);
+	border-block-start: var(--hairline) solid var(--rule);
+}
+
+[data-is="caption"] p:first-of-type + p { margin-block-start: var(--space-3xs); }
+
 @media (min-width: 64rem) {
 	[data-is="spec"] [role="listitem"] { grid-template-columns: minmax(0, 1fr) minmax(0, 3fr); }
 }
 
 [data-is="spec"] [role="listitem"] > p:first-child,
-figcaption p:first-of-type {
+[data-is="caption"] p:first-of-type {
 	font-size: var(--text-xs);
 	font-weight: 700;
 	letter-spacing: var(--track-wide);
