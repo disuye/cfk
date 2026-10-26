@@ -9,6 +9,7 @@ import { buildSet } from './set.js';
 import { createMirror } from './reflect.js';
 import { createDust } from './dust.js';
 import { createPost } from './post.js';
+import { createKaiju } from './kaiju.js';
 import { SUBJECT, STREET } from './layout.js';
 
 const canvas = document.querySelector('[data-is="scene"]');
@@ -116,6 +117,9 @@ const boot = () => {
   dust.objects.forEach((o) => scene.add(o));
   mirror.hide(set.road, set.cross, ...dust.objects);
 
+  const kaiju = createKaiju({ haze });
+  scene.add(kaiju.object);
+
   // Reflections without an HDRI: seed with a generic room, then capture the street itself.
   renderer.shadowMap.needsUpdate = true;
   const pmrem = new PMREMGenerator(renderer);
@@ -154,6 +158,7 @@ const boot = () => {
     lastZ = camera.position.z;
     set.update(time);
     dust.update(time);
+    kaiju.update(time, camera);
     set.sky.position.copy(camera.position);
     mirror.update(scene, camera);
     post.render(time, focus, dt, speed);
@@ -197,7 +202,7 @@ const boot = () => {
   if (!reducedMotion) setLoop(true);
   if (DEBUG) {
     import('./debug.js')
-      .then(({ attach }) => attach({ canvas, renderer, scene, camera, draw, hooks, setLoop, params, tier: tierName }))
+      .then(({ attach }) => attach({ canvas, renderer, scene, camera, draw, hooks, setLoop, params, tier: tierName, kaiju }))
       .catch((e) => console.warn('debug hooks:', e.message));
   }
   addEventListener('resize', () => { resize(); if (reducedMotion) draw(0, STEP); }, { passive: true });

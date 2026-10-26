@@ -12,12 +12,15 @@
 //   &hud                   on-screen stats; &bench runs a timed benchmark after warm-up
 //   &glitch[=0.8|off]      VHS glitch strength, or off. With &still it is off unless given, so QA renders stay clean;
 //                          __scene3d.glitch(len, peak) fires a burst, __scene3d.GLITCH tunes it live
+//   &kaiju[=t]             first kaiju appearance at scene time t (default 0) instead of 60–70 s in;
+//                          __scene3d.kaiju(t) schedules one, __scene3d.KAIJU tunes it live
 import { Color } from '../vendor/three.module.js';
 import { GLITCH, triggerGlitch } from './glitch.js';
+import { KAIJU } from './kaiju.js';
 
 const vec = (s) => (s ? s.split(',').map(Number) : null);
 
-export const attach = ({ canvas, renderer, scene, camera, draw, hooks, setLoop, params, tier }) => {
+export const attach = ({ canvas, renderer, scene, camera, draw, hooks, setLoop, params, tier, kaiju }) => {
   const api = { renderer, scene, camera, tier, frames: 0, stats: null, cam: null };
 
   // Stats across every pass of one frame (composer + mirror + GTAO + bokeh), not just the last render call.
@@ -75,6 +78,9 @@ export const attach = ({ canvas, renderer, scene, camera, draw, hooks, setLoop, 
   else if (params.has('still')) Object.assign(GLITCH, { strength: 0, idle: 0 });
   api.GLITCH = GLITCH;
   api.glitch = (len, peak) => triggerGlitch(len, peak);
+  api.KAIJU = KAIJU;
+  api.kaiju = (at = t) => kaiju?.trigger(at);
+  if (params.has('kaiju')) api.kaiju(Number(params.get('kaiju') || 0));
 
   // Benchmark: n back-to-back frames, each forced to finish on the GPU. Real ms/frame for the §18 budget.
   // A 1-px readPixels is the sync: gl.finish() returns early on Chrome/ANGLE-Metal and under-reports ~2×.
