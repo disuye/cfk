@@ -369,7 +369,9 @@ figure img {
 }
 
 figcaption {
-	
+	margin-block-start: var(--space-xs);
+	padding: var(--space-s) var(--space-m);
+	font-size: var(--text-s);
 }
 
 article > p > img {
@@ -394,6 +396,9 @@ main > article {
 	grid-template-columns: minmax(0, 1fr);
 	gap: var(--space-s);
 	padding: var(--space-m);
+}
+
+:is(main > article, figcaption) {
 	background: var(--panel);
 	border: var(--hairline) solid var(--rule);
 	border-block-start: var(--rule-heavy) solid var(--violet);
