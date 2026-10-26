@@ -370,8 +370,13 @@ figure img {
 
 figcaption {
 	margin-block-start: var(--space-xs);
-	padding: var(--space-s) var(--space-m);
-	font-size: var(--text-s);
+	padding: var(--space-m) var(--space-m);
+	font-size: var(--text-m);
+}
+
+figcaption p:before {
+	content:"·";
+	margin-right: var(--space-xs);
 }
 
 article > p > img {
