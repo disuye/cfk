@@ -1,16 +1,27 @@
 'use strict';
 
 // Locks viewport height into tokens: --vh-static (measured), --vh-lock (only grows). Re-measures on orientation change.
+// The lock only applies to touch browsers (collapsing URL bar); desktop windows re-measure on every resize.
 const lockViewportHeight = () => {
   const root = document.documentElement.style;
   const portrait = matchMedia('(orientation: portrait)');
+  const touch = matchMedia('(pointer: coarse)');
   let height;
   const set = (name, px) => root.setProperty(name, `${px}px`);
   const measure = () => { height = innerHeight; set('--vh-static', height); set('--vh-lock', height); };
   const grow = () => { if (innerHeight <= height) return; height = innerHeight; set('--vh-lock', height); };
   portrait.addEventListener('change', () => { measure(); addEventListener('resize', measure, { once: true }); });
-  addEventListener('resize', grow, { passive: true });
+  addEventListener('resize', () => (touch.matches ? grow() : measure()), { passive: true });
   measure();
+};
+
+// Moving a window to a screen with a different pixel ratio doesn't reliably fire 'resize'; re-dispatch it
+// so every resize listener (scene buffer, grain tile, viewport tokens) picks up the new devicePixelRatio.
+const watchPixelRatio = () => {
+  matchMedia(`(resolution: ${devicePixelRatio}dppx)`).addEventListener('change', () => {
+    dispatchEvent(new Event('resize'));
+    watchPixelRatio();
+  }, { once: true });
 };
 
 // Fades blocks up as they enter; blocks entering together stagger by 120ms.
@@ -75,3 +86,4 @@ document.querySelectorAll('button[aria-controls][aria-expanded]').forEach(toggle
 document.querySelectorAll('[data-is="nav-menu"]').forEach(closeMenuOnNavigate);
 document.querySelectorAll('[data-copy][data-u][data-d]').forEach(copyEmail);
 lockViewportHeight();
+watchPixelRatio();
