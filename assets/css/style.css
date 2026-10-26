@@ -368,8 +368,20 @@ figure img {
 	transition: scale var(--t-slow) var(--ease), box-shadow var(--t-slow) var(--ease);
 }
 
+figcaption {
+	
+}
+
 article > p > img {
 	filter: grayscale(100%);
+}
+
+article > p > iframe {
+	display: block;
+	inline-size: 100%;
+	block-size: auto;
+	aspect-ratio: 16 / 9;
+	border-radius: var(--radius);
 }
 
 figure a:is(:hover, :focus-visible) img {
@@ -379,6 +391,7 @@ figure a:is(:hover, :focus-visible) img {
 
 main > article {
 	display: grid;
+	grid-template-columns: minmax(0, 1fr);
 	gap: var(--space-s);
 	padding: var(--space-m);
 	background: var(--panel);
