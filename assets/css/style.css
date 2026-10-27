@@ -378,13 +378,20 @@ figure img {
 	font-size: var(--text-m);
 }
 
-article > p > img {
+article img,
+article iframe {
 	filter: contrast(140%) brightness(95%) grayscale(0%) sepia(100%) hue-rotate(160deg) saturate(200%);
 }
 
-article > p > img:hover {
+article *:hover {
 	filter: contrast(100%) brightness(100%) grayscale(0%) sepia(0%) hue-rotate(0deg) saturate(100%);
 }
+
+iframe {
+    min-width: 561px;
+	min-height: 321px;
+}
+
 
 article > p > iframe {
 	display: block;
