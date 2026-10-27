@@ -390,6 +390,10 @@ article > p > iframe {
 	border-radius: var(--radius);
 }
 
+article img:hover {
+	filter: grayscale(0%);
+}
+
 figure a:is(:hover, :focus-visible) img {
 	scale: 0.98;
 	box-shadow: var(--hover-glow); 
