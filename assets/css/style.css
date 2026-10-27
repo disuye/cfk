@@ -379,7 +379,7 @@ figure img {
 }
 
 article > p > img {
-	filter: grayscale(100%);
+	filter: contrast(140%) brightness(95%) grayscale(0%) sepia(100%) hue-rotate(160deg) saturate(200%);
 }
 
 article > p > iframe {
@@ -388,10 +388,6 @@ article > p > iframe {
 	block-size: auto;
 	aspect-ratio: 16 / 9;
 	border-radius: var(--radius);
-}
-
-article img:hover {
-	filter: grayscale(0%);
 }
 
 figure a:is(:hover, :focus-visible) img {
