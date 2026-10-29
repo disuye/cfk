@@ -378,6 +378,34 @@ figure img {
 	font-size: var(--text-m);
 }
 
+/* Widescreen bars rollover effect 
+article > p:has(> img, > iframe) {
+	--bar: 12%;
+	position: relative;
+	overflow: clip;
+	border-radius: var(--radius);
+}
+
+article > p:has(> img, > iframe)::before,
+article > p:has(> img, > iframe)::after {
+	content: "";
+	position: absolute;
+	z-index: 1;
+	inset-inline: 0;
+	block-size: var(--bar);
+	background: #000;
+	pointer-events: none;
+	transition: block-size var(--t-slow) var(--ease);
+}
+
+article > p:has(> img, > iframe)::before { inset-block-start: 0; }
+article > p:has(> img, > iframe)::after  { inset-block-end: 0; }
+
+article > p:has(> img, > iframe):hover::before,
+article > p:has(> img, > iframe):hover::after {
+	block-size: 0;
+} */
+
 article img,
 article iframe {
 	filter: contrast(140%) brightness(95%) grayscale(0%) sepia(100%) hue-rotate(160deg) saturate(200%);
