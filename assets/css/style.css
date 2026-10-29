@@ -430,7 +430,8 @@ article > p > iframe {
 
 figure a:is(:hover, :focus-visible) img {
 	scale: 0.98;
-	box-shadow: var(--hover-glow); 
+	box-shadow: var(--hover-glow);
+	background-color: rgba(var(--signal-rgb) / 0.6); 
 }
 
 main > article {
