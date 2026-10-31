@@ -365,8 +365,9 @@ figure {
 	border-radius: var(--radius);
 }
 
-figure img { 
+figure img {
 	inline-size: 100%;
+	aspect-ratio: 3 / 4;
 	border-radius: var(--radius);
 	scale: 1.0;
 	transition: scale var(--t-slow) var(--ease), box-shadow var(--t-slow) var(--ease);
