@@ -1,6 +1,6 @@
 # CFK
 Temp holding server for:
-- cfkpro.com
+- cfkmedia.com
 - cfkproductions.com
 
 ## Debug
